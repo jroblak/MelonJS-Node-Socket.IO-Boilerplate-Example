@@ -29,7 +29,6 @@ game.playScreen = me.ScreenObject.extend({
         me.game.add(global.state.localPlayer, 4);
         me.game.sort();
 
-        // http://westward.aws.af.cm
         socket = io.connect("http://localhost", {port: 8000, transports: ["websocket"]});
 
         socket.on("connect", this.onSocketConnected);
@@ -55,14 +54,17 @@ game.playScreen = me.ScreenObject.extend({
         var newPlayer = new game.Player(data.x, data.y, {
             spritewidth: 50,
             spriteheight: 30,
-            name: "other"
+            name: "o"
         });
         newPlayer.id = data.id;
+        newPlayer.name = data.name;
 
         global.state.remotePlayers.push(newPlayer);
 
         me.game.add(newPlayer, 3);
         me.game.sort(game.sort);
+
+        console.log("I now see "+global.state.remotePlayers.length+" players, plus myself");
     },
 
     onRemovePlayer: function(data) {
@@ -74,6 +76,7 @@ game.playScreen = me.ScreenObject.extend({
         };
 
         me.game.remove(removePlayer);
+        me.game.sort();
         global.state.remotePlayers.splice(global.state.remotePlayers.indexOf(removePlayer), 1);
     },
 
@@ -83,7 +86,7 @@ game.playScreen = me.ScreenObject.extend({
         if(!movePlayer || movePlayer.name === 'player') {
             return;
         }
-
+        console.log(movePlayer.name+" just moved");
         movePlayer.pos.x = data.x;
         movePlayer.pos.y = data.y;
     }

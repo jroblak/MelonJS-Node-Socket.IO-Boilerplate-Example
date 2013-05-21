@@ -12,7 +12,6 @@ game.Player = game.Entity.extend({
         if(this.name === "player") {
             global.state.localPlayer = this;
             me.game.viewport.follow(this, me.game.viewport.AXIS.BOTH);
-            console.log(this);
         }
 
         var names = [];
@@ -100,7 +99,7 @@ game.Player = game.Entity.extend({
             var self= this;
             this.font.draw(
                 context,
-                self.id,
+                self.name,
                 self.pos.x + 25,
                 self.pos.y - 15
             );

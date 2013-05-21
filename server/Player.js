@@ -1,7 +1,8 @@
 var Player = function(startX, startY) {
     var x = startX,
         y = startY,
-        id;
+        id,
+        easyid;
 
     var getX = function() {
         return x;
@@ -24,7 +25,8 @@ var Player = function(startX, startY) {
         getY: getY,
         setX: setX,
         setY: setY,
-        id: id
+        id: id,
+        easyid: easyid
     }
 };
 
