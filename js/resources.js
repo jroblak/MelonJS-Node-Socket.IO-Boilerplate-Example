@@ -1,3 +1,4 @@
+// Game resources to load
 game.resources = {
     img : [
         "logo",

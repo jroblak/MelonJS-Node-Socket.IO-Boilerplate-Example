@@ -30,6 +30,11 @@ function onSocketConnection(client) {
     client.on("disconnect", onClientDisconnect);
     client.on("new player", onNewPlayer);
     client.on("move player", onMovePlayer);
+    client.on("ping", pong);
+};
+
+function pong() {
+    this.emit("pong");
 };
 
 function onClientDisconnect() {

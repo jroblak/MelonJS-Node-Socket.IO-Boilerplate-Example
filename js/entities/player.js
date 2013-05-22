@@ -4,6 +4,7 @@ game.Player = game.Entity.extend({
         this.setVelocity(4.0, 5.0);
         this.setFriction(0.5, 0.5);
         this.gravity *= 3;
+        this.step = 0;
         this.id;
         this.moving = false;
         this.direction = 'right';
@@ -15,7 +16,8 @@ game.Player = game.Entity.extend({
         }
 
         var names = [];
-        /*
+
+        /* Cool idea to steal
         var dirs = [ "left", "right", "up", "down" ];
         for (var j = 0; j < dirs.length; j++) {
             for (var i = 1; i <= 7; i++) {
@@ -48,6 +50,7 @@ game.Player = game.Entity.extend({
     update : function () {
         // Movement
         var self = this;
+        this.step++;
 
         if(this.name === 'player') {
             if(me.input.isKeyPressed("left")) {
@@ -65,31 +68,15 @@ game.Player = game.Entity.extend({
 
         }
 
-        if(me.sys.isMobile) {
-            var vp = me.game.viewport;
-
-            me.input.registerMouseEvent("mousedown", vp, function () {
-                var touches = me.input.touches;
-
-                if(touches[0].x > self.pos.x) {
-                    self.moving = true;
-                    self.direction = "right";
-                } else {
-                    self.moving = true;
-                    self.direction = "left";
-                }
-            }, false);
-            me.input.registerMouseEvent("mouseup", vp, function () {
-                self.moving = false;
-            }, false);
-
-        }
-
         me.game.collide(this, true);
         var result = this.parent();
 
-        if(result) {
+        if(result && this.step % 3 === 0) {
             socket.emit("move player", {x: this.pos.x, y: this.pos.y});
+        }
+
+        if(this.step > 99) {
+            this.step = 0;
         }
 
         return result;

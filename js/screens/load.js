@@ -1,3 +1,4 @@
+// Simple loading screen
 game.loadScreen = me.ScreenObject.extend({
     init : function () {
         this.parent(true);
