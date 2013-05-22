@@ -1,11 +1,11 @@
 var app       = require('express')(),
-        server = require('http').createServer(app),
-        io           = require('socket.io').listen(server),
+server         = require('http').createServer(app),
+io                  = require('socket.io').listen(server),
 Player           = require("./Player").Player;
 var util         = require("util");
 var port         = 8000;
 
-var socket, players;
+var players;
 
 function init() {
     players = [];
@@ -96,7 +96,8 @@ function onMovePlayer(data) {
 
 io.configure(function() {
     io.set("transports", ["websocket"]);
-    io.set("log level", 2)
+    // At 3 for debugging
+    io.set("log level", 3)
 });
 
 server.listen(port);
