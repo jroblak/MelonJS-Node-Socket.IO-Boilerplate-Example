@@ -5,8 +5,8 @@ var global = {
     DOUBLE: true,
     DEBUG: true,
     network: {
-        host: "http://localhost",
-        port: 8000,
+        host: "http://ec2-54-234-85-69.compute-1.amazonaws.com",
+        port: 80,
         totlatency: 0,
         latency: 0,
         emitTime: 0,
