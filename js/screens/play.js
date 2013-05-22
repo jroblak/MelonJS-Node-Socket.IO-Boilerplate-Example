@@ -1,5 +1,6 @@
 /*
     TODO -  Separate network lobby screen (separate some of the joining/network logic from this)
+    TODO - Interpolation - http://en.wikipedia.org/wiki/Interpolation
 */
 
 game.playScreen = me.ScreenObject.extend({
