@@ -5,6 +5,7 @@ var global = {
     DOUBLE: true,
     DEBUG: true,
     network: {
+        totlatency: 0,
         latency: 0,
         emitTime: 0,
         emits: 0
@@ -77,7 +78,6 @@ var game = {
         me.state.set(me.state.MENU, new game.startScreen());
         game.playscreen = new game.playScreen();
         me.state.set(me.state.PLAY, game.playscreen);
-        me.state.set(me.state.GAME_END, new game.EndScreen());
 
         me.input.bindKey(me.input.KEY.ENTER, "action");
         me.input.bindKey(me.input.KEY.RIGHT, "right");

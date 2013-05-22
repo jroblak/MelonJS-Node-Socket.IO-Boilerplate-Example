@@ -84,8 +84,9 @@ game.playScreen = me.ScreenObject.extend({
 
     updateLatency: function() {
         // Simply updates the average latency
-        global.network.latency = (( global.network.latency + (+new Date - global.network.emitTime))/global.network.emits);
-        me.game.HUD.setItemValue("latency", global.state.latency);
+        global.network.totlatency += +new Date - global.network.emitTime
+        global.network.latency = Math.round(global.network.totlatency/global.network.emits);
+        me.game.HUD.setItemValue("latency", global.network.latency);
     },
 
     onNewPlayer: function(data) {
