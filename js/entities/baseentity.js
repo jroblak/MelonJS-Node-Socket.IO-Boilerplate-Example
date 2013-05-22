@@ -26,11 +26,6 @@ game.Entity = me.ObjectEntity.extend({
 
         }
 
-        if(this.jumping) {
-            this.accel.y -= this.gravity * me.timer.tick;
-            this.vel.y -= this.accel.y * me.timer.tick;
-        }
-
         this.updateMovement();
 
         if (this.vel.x || this.vel.y) {
