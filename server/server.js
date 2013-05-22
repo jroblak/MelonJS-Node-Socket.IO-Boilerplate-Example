@@ -3,7 +3,7 @@ server         = require('http').createServer(app),
 io                  = require('socket.io').listen(server),
 Player           = require("./Player").Player;
 var util         = require("util");
-var port         = 8000;
+var port         = 8080;
 
 var players;
 
