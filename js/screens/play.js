@@ -132,7 +132,7 @@ game.playScreen = me.ScreenObject.extend({
         var movePlayer = playerById(data.id);
 
         // if it isn't us, or we can't find it (bad!)
-        if(!movePlayer || movePlayer.name === 'player') {
+        if(!movePlayer) {
             return;
         }
 

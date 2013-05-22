@@ -32,7 +32,7 @@ var game = {
         me.debug.renderCollisionMap = global.DEBUG;
         me.debug.renderHitBox = global.DEBUG;
         me.debug.renderVelocity = global.DEBUG;
-        me.sys.pauseOnBlur = global.DEBUG;
+        me.sys.pauseOnBlur = !global.DEBUG;
 
         me.loader.onload = this.loaded.bind(this);
         this.loadResources();

@@ -71,7 +71,7 @@ game.Player = game.Entity.extend({
         me.game.collide(this, true);
         var result = this.parent();
 
-        if(result && this.step % 3 === 0) {
+        if(this.name === "player" && result && this.step % 3 === 0) {
             socket.emit("move player", {x: this.pos.x, y: this.pos.y});
         }
 
