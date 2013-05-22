@@ -53,7 +53,7 @@ function onClientDisconnect() {
 function onNewPlayer(data) {
     util.log("New player has connected: "+(players.length+1));
     // Make new server data for Player
-    var newPlayer = new Player(data.x, data.y);
+    var newPlayer = new Player(data.x, data.y, data.vX, data.vY);
     newPlayer.id = this.id;
     newPlayer.easyid = players.length + 1;
 
@@ -62,7 +62,7 @@ function onNewPlayer(data) {
     }
 
     // Let the existing players know there is a new player
-    this.broadcast.emit("new player", {id: newPlayer.id, name:newPlayer.easyid, x: newPlayer.getX(), y: newPlayer.getY()});
+    this.broadcast.emit("new player", {id: newPlayer.id, name:newPlayer.easyid, x: newPlayer.getX(), y: newPlayer.getY(), vX: newPlayer.getvX(), vY: newPlayer.getvY()});
 
     // Loop through existing players and send to current player
     var i, existingPlayer;
@@ -71,7 +71,7 @@ function onNewPlayer(data) {
     for(i = 0; i < players.length; i++) {
         existingPlayer = players[i];
         util.log(existingPlayer.easyid);
-        this.emit("new player", {id: existingPlayer.id, name:existingPlayer.easyid, x: existingPlayer.getX(), y: existingPlayer.getY()});
+        this.emit("new player", {id: existingPlayer.id, name:existingPlayer.easyid, x: existingPlayer.getX(), y: existingPlayer.getY(), vX: existingPlayer.getvX(), vY: existingPlayer.getvY()});
     };
 
     // Add new player to array
@@ -90,8 +90,10 @@ function onMovePlayer(data) {
 
     movePlayer.setX(data.x);
     movePlayer.setY(data.y);
+    movePlayer.setvX(data.vX);
+    movePlayer.setvY(data.vY);
 
-    this.broadcast.emit("move player", {id: movePlayer.id, x:movePlayer.getX(), y:movePlayer.getY()});
+    this.broadcast.emit("move player", {id: movePlayer.id, x:movePlayer.getX(), y:movePlayer.getY(), vX: movePlayer.getvX(), vY: movePlayer.getvY()});
 };
 
 io.configure(function() {

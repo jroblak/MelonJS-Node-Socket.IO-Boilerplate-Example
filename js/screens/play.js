@@ -1,6 +1,8 @@
 /*
     TODO -  Separate network lobby screen (separate some of the joining/network logic from this)
     TODO - Interpolation - http://en.wikipedia.org/wiki/Interpolation
+                                                - http://playerio.com/documentation/tutorials/building-flash-multiplayer-games-tutorial/tipstricks
+                                                - http://www.mindcontrol.org/~hplus/interpolation.html
 */
 
 game.playScreen = me.ScreenObject.extend({
@@ -74,7 +76,7 @@ game.playScreen = me.ScreenObject.extend({
     onSocketConnected: function() {
         console.log("Connected to socket server");
         // When we connect, tell the server we have a new player (us)
-        socket.emit("new player", {x: global.state.localPlayer.pos.x, y: global.state.localPlayer.pos.y})
+        socket.emit("new player", {x: global.state.localPlayer.pos.x, y: global.state.localPlayer.pos.y, vX:global.state.localPlayer.vel.x, vY: global.state.localPlayer.vel.y})
 
         // Set up ping / pongs for latency
         setInterval(function () {
@@ -107,7 +109,7 @@ game.playScreen = me.ScreenObject.extend({
         me.game.sort(game.sort);
 
         // Update the HUD with the new number of players
-        me.game.HUD.setItemValue("connected", global.state.remotePlayers.length);
+        me.game.HUD.setItemValue("connected", (global.state.remotePlayers.length+1));
     },
 
     onRemovePlayer: function(data) {
@@ -125,7 +127,7 @@ game.playScreen = me.ScreenObject.extend({
         global.state.remotePlayers.splice(global.state.remotePlayers.indexOf(removePlayer), 1);
 
         // and update the HUD
-        me.game.HUD.setItemValue("connected", global.state.remotePlayers.length);
+        me.game.HUD.setItemValue("connected", (global.state.remotePlayers.length+1));
     },
 
     onMovePlayer: function(data) {
@@ -140,5 +142,18 @@ game.playScreen = me.ScreenObject.extend({
         // update the players position locally
         movePlayer.pos.x = data.x;
         movePlayer.pos.y = data.y;
+        movePlayer.vel.x = data.vX;
+        movePlayer.vel.y = data.vY;
+    },
+
+    update: function() {
+        for(var i = 0; i < global.state.remotePlayers.length; i++) {
+            var tempPlayer = global.state.remotePlayers[i];
+            if(tempPlayer.vel.x != 0 || tempPlayer.vel.y != 0) {
+                tempPlayer.update();
+            }
+        }
+
+        return this.parent();
     }
 });

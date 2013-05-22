@@ -72,7 +72,7 @@ game.Player = game.Entity.extend({
         var result = this.parent();
 
         if(this.name === "player" && result && this.step % 3 === 0) {
-            socket.emit("move player", {x: this.pos.x, y: this.pos.y});
+            socket.emit("move player", {x: this.pos.x, y: this.pos.y, vX: this.vel.x, vY: this.vel.y});
         }
 
         if(this.step > 99) {
