@@ -6,7 +6,6 @@
 */
 
 game.playScreen = me.ScreenObject.extend({
-
     onResetEvent : function () {
         // Set up loader callback
         me.game.onLevelLoaded = this.onLevelLoaded.bind(this);
@@ -144,16 +143,5 @@ game.playScreen = me.ScreenObject.extend({
         movePlayer.pos.y = data.y;
         movePlayer.vel.x = data.vX;
         movePlayer.vel.y = data.vY;
-    },
-
-    update: function() {
-        for(var i = 0; i < global.state.remotePlayers.length; i++) {
-            var tempPlayer = global.state.remotePlayers[i];
-            if(tempPlayer.vel.x != 0 || tempPlayer.vel.y != 0) {
-                tempPlayer.update();
-            }
-        }
-
-        return this.parent();
     }
 });

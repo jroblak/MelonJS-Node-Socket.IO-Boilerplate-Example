@@ -48,6 +48,7 @@ game.Player = game.Entity.extend({
     },
 
     update : function () {
+        console.log(me.timer.tick);
         // Movement
         var self = this;
         this.step++;
