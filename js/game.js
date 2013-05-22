@@ -5,6 +5,8 @@ var global = {
     DOUBLE: true,
     DEBUG: true,
     network: {
+        host: "http://localhost",
+        port: 8000,
         totlatency: 0,
         latency: 0,
         emitTime: 0,
@@ -26,9 +28,11 @@ var game = {
         me.sys.preRender = true;
         me.sys.useNativeAnimFrame = true;
         me.sys.stopOnAudioError = false;
-        me.debug.renderCollisionMap = true;
-        me.debug.renderHitBox = true;
-        me.debug.renderVelocity = true;
+
+        me.debug.renderCollisionMap = global.DEBUG;
+        me.debug.renderHitBox = global.DEBUG;
+        me.debug.renderVelocity = global.DEBUG;
+        me.sys.pauseOnBlur = global.DEBUG;
 
         me.loader.onload = this.loaded.bind(this);
         this.loadResources();

@@ -46,7 +46,8 @@ game.playScreen = me.ScreenObject.extend({
         me.game.sort();
 
         // Connect to the game server
-        socket = io.connect("http://localhost", {port: 8000, transports: ["websocket"]});
+        socket = io.connect(global.network.host, {port: global.network.port, transports: ["websocket"]});
+
         // and set up our networking callbacks
         socket.on("connect", this.onSocketConnected);
         socket.on("new player", this.onNewPlayer);
