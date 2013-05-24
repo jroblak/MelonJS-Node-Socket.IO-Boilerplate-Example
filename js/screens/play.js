@@ -33,6 +33,11 @@ game.playScreen = me.ScreenObject.extend({
 
     onLevelLoaded : function (name) {
         console.log("[+] onLevelLoaded:");
+
+        me.input.bindKey(me.input.KEY.RIGHT, "right");
+        me.input.bindKey(me.input.KEY.LEFT, "left");
+        me.input.bindKey(me.input.KEY.SPACE, "jump");
+
         // Fade out
         me.game.viewport.fadeOut("#000", 500);
 
@@ -42,7 +47,9 @@ game.playScreen = me.ScreenObject.extend({
             spriteheight: 30,
             name: "player"
         });
-        global.state.localPlayer.id = "player";
+
+        global.state.localPlayer.name = global.state.playername;
+        global.state.localPlayer.id = global.state.playername;
 
         me.game.add(global.state.localPlayer, 4);
         me.game.sort();
@@ -68,8 +75,7 @@ game.playScreen = me.ScreenObject.extend({
         // Unbind keys
         me.input.unbindKey(me.input.KEY.LEFT);
         me.input.unbindKey(me.input.KEY.RIGHT);
-        me.input.unbindKey(me.input.KEY.UP);
-        me.input.unbindKey(me.input.KEY.DOWN);
+        me.input.unbindKey(me.input.KEY.SPACE);
     },
 
     onSocketConnected: function() {

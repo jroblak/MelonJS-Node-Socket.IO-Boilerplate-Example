@@ -19,3 +19,11 @@ body {
     /* Hide the gap for font descenders. */
     display: block;
 }
+
+.name {
+    position: absolute;
+    top: 70%;
+    left: 42.5%;
+    width: 15%;
+    visibility:hidden;
+}

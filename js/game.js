@@ -13,6 +13,7 @@ var global = {
         emits: 0
     },
     state: {
+        playername: "",
         localPlayer: undefined,
         remotePlayers: []
     }
@@ -84,9 +85,6 @@ var game = {
         me.state.set(me.state.PLAY, game.playscreen);
 
         me.input.bindKey(me.input.KEY.ENTER, "action");
-        me.input.bindKey(me.input.KEY.RIGHT, "right");
-        me.input.bindKey(me.input.KEY.LEFT, "left");
-        me.input.bindKey(me.input.KEY.SPACE, "jump");
 
         // Load texture.
         game.texture = new me.TextureAtlas(

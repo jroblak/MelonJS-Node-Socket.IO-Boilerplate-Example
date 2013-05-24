@@ -51,7 +51,7 @@ game.Player = game.Entity.extend({
         var self = this;
         this.step++;
 
-        if(this.name === 'player') {
+        if(this.name === global.state.playername) {
             if(me.input.isKeyPressed("left")) {
                 this.moving = true;
                 this.direction = "left";
@@ -71,7 +71,7 @@ game.Player = game.Entity.extend({
         var result = this.parent();
 
         // Add step checking and interpolation instead of this
-        if(this.name === "player" && result) {
+        if(this.name === global.state.playername && result) {
             socket.emit("move player", {x: this.pos.x, y: this.pos.y, vX: this.vel.x, vY: this.vel.y});
         }
 

@@ -16,6 +16,9 @@ game.startScreen = me.ScreenObject.extend({
         me.game.add(logo, 2);
         me.game.sort(game.sort);
 
+        $('.name').css('visibility', 'visible');
+
+
         me.game.viewport.fadeOut("#000", 250);
     },
 
@@ -24,6 +27,12 @@ game.startScreen = me.ScreenObject.extend({
 
     update: function () {
         if (me.input.isKeyPressed("action")) {
+            me.input.unbindKey(me.input.KEY.ENTER, "action");
+
+            global.state.playername = $(":input").val().length > 0 ? $(":input").val() : "Nameless";
+
+            $('.name').hide();
+
             me.game.viewport.fadeIn("#000", 500, function () {
                 me.state.change(me.state.PLAY);
             });
@@ -33,7 +42,7 @@ game.startScreen = me.ScreenObject.extend({
     },
 
     draw: function (context) {
-            var msg = (me.sys.isMobile ? "touch" : "enter") + " to start";
+            var msg =  "Input your name and press enter to start";
 
             this.font.draw(
                 context,
