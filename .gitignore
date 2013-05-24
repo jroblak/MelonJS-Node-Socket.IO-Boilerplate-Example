@@ -1,3 +1,4 @@
 package.json
 err.log
 out.log
+.DS_Store
