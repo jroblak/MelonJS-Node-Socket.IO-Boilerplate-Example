@@ -48,7 +48,7 @@ var Player = function(startX, startY, velX, velY) {
         setvX: setvX,
         setvY: setvY,
         id: id,
-        easyid: easyid
+        easyid: easyid,
     }
 };
 
