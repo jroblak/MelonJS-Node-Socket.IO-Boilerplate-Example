@@ -6,8 +6,6 @@ game.Entity = me.ObjectEntity.extend({
     update : function () {
         if (this.moving) {
 
-            // Look into replacing this with dispatch tables
-            // http://designpepper.com/blog/drips/using-dispatch-tables-to-avoid-conditionals-in-javascript
             switch (this.direction) {
                 case "left":
                     if (!this.renderable.isCurrentAnimation("left"))

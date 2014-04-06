@@ -1,11 +1,3 @@
-/*
-    TODO - Interpolation - http://en.wikipedia.org/wiki/Interpolation
-                         - http://playerio.com/documentation/tutorials/building-flash-multiplayer-games-tutorial/tipstricks
-                         - http://www.mindcontrol.org/~hplus/interpolation.html
-
-    TODO - Warmup / 15 second timer before game 'starts'
-*/
-
 game.playScreen = me.ScreenObject.extend({
     onResetEvent : function () {
         // Set up loader callback

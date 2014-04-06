@@ -1,12 +1,3 @@
-/*
-    TODO - Add onDeleteRoom to purge roomlist
-    TODO - Welcome message / effects
-    TODO - Display player character
-    TODO - Add player customization abilities -- reimplement composition engine, add screen it, etc
-    TODO - Make customization unlockable / user accounts
-    TODO - Server list (requires adding passwords and naming rooms)
-*/
-
 game.lobbyScreen = me.ScreenObject.extend({
     init: function() {
         // This is so we can draw

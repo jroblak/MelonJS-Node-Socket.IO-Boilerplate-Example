@@ -4,12 +4,6 @@ game.startScreen = me.ScreenObject.extend({
         this.font = new me.Font("Verdana", 12, "#fff", "center");
     },
 
-    /* TO DOS:
-            - Cool background effect(s)
-            - New logo
-            - Audio
-     */
-
     onResetEvent : function () {
         var logo = new me.ImageLayer("logo", 0, 0, "logo", 2, 1);
 

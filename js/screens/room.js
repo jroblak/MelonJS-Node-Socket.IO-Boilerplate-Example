@@ -1,10 +1,3 @@
-/*
-    TODO - Better interface
-    TODO - Player sprite image next to name
-    TODO - Chat
-    TODO - Skip this screen if game already started?
-*/
-
 game.roomScreen = me.ScreenObject.extend({
     init: function() {
         this.parent(true);
