@@ -1,8 +1,9 @@
 /*
-    TODO -  Separate network lobby screen (separate some of the joining/network logic from this)
     TODO - Interpolation - http://en.wikipedia.org/wiki/Interpolation
-                                                - http://playerio.com/documentation/tutorials/building-flash-multiplayer-games-tutorial/tipstricks
-                                                - http://www.mindcontrol.org/~hplus/interpolation.html
+                         - http://playerio.com/documentation/tutorials/building-flash-multiplayer-games-tutorial/tipstricks
+                         - http://www.mindcontrol.org/~hplus/interpolation.html
+
+    TODO - Warmup / 15 second timer before game 'starts'
 */
 
 game.playScreen = me.ScreenObject.extend({
@@ -10,65 +11,33 @@ game.playScreen = me.ScreenObject.extend({
         // Set up loader callback
         me.game.onLevelLoaded = this.onLevelLoaded.bind(this);
 
-        // Load our level
-        me.levelDirector.loadLevel("main");
-
         // Load the HUD
         me.game.addHUD(0, 0, global.WIDTH, 20, "rgba(0, 0, 0, 0.5)");
         me.game.HUD.addItem("latency", new game.Info(10, 5, "latency"));
         me.game.HUD.addItem("connected", new game.Info(100, 5, "connected players"));
 
-        // Helper function to return one of our remote players
-        playerById = function(id) {
-            var i;
-
-            for (i = 0; i < global.state.remotePlayers.length; i++) {
-                if (global.state.remotePlayers[i].id == id)
-                    return global.state.remotePlayers[i];
-            };
-
-            return false;
-        };
+        // Load our level
+        me.levelDirector.loadLevel("main");
     },
 
     onLevelLoaded : function (name) {
-        console.log("[+] onLevelLoaded:");
-
         me.input.bindKey(me.input.KEY.RIGHT, "right");
         me.input.bindKey(me.input.KEY.LEFT, "left");
         me.input.bindKey(me.input.KEY.SPACE, "jump");
+        me.input.bindKey(me.input.KEY.Z, "attack");
+        me.input.bindKey(me.input.KEY.X, "web");
 
-        // Fade out
-        me.game.viewport.fadeOut("#000", 500);
+        this.createPlayers();
 
-        // Create our player and set them to be the local player (so we know who "we" are)
-        global.state.localPlayer = new game.Player(40, 190, {
-            spritewidth: 50,
-            spriteheight: 30,
-            name: "player"
-        });
+        global.network.socket.on("move player", this.onMovePlayer);
+        global.network.socket.on("remove player", this.onRemovePlayer);
+        global.network.socket.on("pong", this.updateLatency);
 
-        global.state.localPlayer.name = global.state.playername;
-        global.state.localPlayer.id = global.state.playername;
-
-        me.game.add(global.state.localPlayer, 4);
-        me.game.sort();
-
-        // Connect to the game server
-        socket = io.connect(global.network.host, {port: global.network.port, transports: ["websocket"]});
-
-        // and set up our networking callbacks
-        socket.on("connect", this.onSocketConnected);
-        socket.on("new player", this.onNewPlayer);
-        socket.on("move player", this.onMovePlayer);
-        socket.on("remove player", this.onRemovePlayer);
-        socket.on("error", this.handleError);
-        socket.on("pong", this.updateLatency);
-    },
-
-    // For error debugging
-    handleError: function(error){
-        console.log(error);
+        setInterval(function () {
+            global.network.emitTime = +new Date;
+            global.network.emits++;
+            global.network.socket.emit('ping');
+        }, 500);
     },
 
     onDestroyEvent: function () {
@@ -76,19 +45,8 @@ game.playScreen = me.ScreenObject.extend({
         me.input.unbindKey(me.input.KEY.LEFT);
         me.input.unbindKey(me.input.KEY.RIGHT);
         me.input.unbindKey(me.input.KEY.SPACE);
-    },
-
-    onSocketConnected: function() {
-        console.log("Connected to socket server");
-        // When we connect, tell the server we have a new player (us)
-        socket.emit("new player", {x: global.state.localPlayer.pos.x, y: global.state.localPlayer.pos.y, vX:global.state.localPlayer.vel.x, vY: global.state.localPlayer.vel.y})
-
-        // Set up ping / pongs for latency
-        setInterval(function () {
-            global.network.emitTime = +new Date;
-            global.network.emits++;
-            socket.emit('ping');
-        }, 500);
+        me.input.unbindKey(me.input.KEY.Z);
+        me.input.unbindKey(me.input.KEY.X);
     },
 
     updateLatency: function() {
@@ -98,28 +56,45 @@ game.playScreen = me.ScreenObject.extend({
         me.game.HUD.setItemValue("latency", global.network.latency);
     },
 
-    onNewPlayer: function(data) {
-        // When a new player connects, we create their object and add them to the screen.
-        var newPlayer = new game.Player(data.x, data.y, {
+    createPlayers: function(data) {
+        // get spawn points (from server?)
+
+        // Add player
+        global.state.localPlayer = new game.Player(40, 190, {
             spritewidth: 50,
             spriteheight: 30,
-            name: "o"
+            name:  global.state.playername
         });
-        newPlayer.id = data.id;
-        newPlayer.name = data.name;
 
-        global.state.remotePlayers.push(newPlayer);
+        me.game.add(global.state.localPlayer, 4);
 
-        me.game.add(newPlayer, 3);
-        me.game.sort(game.sort);
+        var tempGlobalPlayers = []
+        // loop through array and add everyone
+        for(var i = 0; i < global.state.remotePlayers.length; i++) {
+            tempGlobalPlayers.push(global.state.remotePlayers.pop());
+        }
 
-        // Update the HUD with the new number of players
+        for(var j = 0; j < tempGlobalPlayers.length; i++) {
+            var tempPlayer = tempGlobalPlayers.pop();
+            var newPlayer = new game.Player(45, 190, {
+                spriteheight: 30,
+                spritewidth :  50
+            });
+            newPlayer.name = tempPlayer.name;
+            newPlayer.id = tempPlayer.id;
+
+            me.game.add(newPlayer, 4);
+            global.state.remotePlayers.push(newPlayer);
+        }
+
+        // Update the HUD with the number of players
         me.game.HUD.setItemValue("connected", (global.state.remotePlayers.length+1));
+        me.game.sort();
     },
 
     onRemovePlayer: function(data) {
         // When a player disconnects, we find them in our remote players array
-        var removePlayer = playerById(data.id);
+        var removePlayer = global.functions.playerById(data.id);
 
         if(!removePlayer) {
             console.log("Player not found "+data.id);
@@ -137,17 +112,19 @@ game.playScreen = me.ScreenObject.extend({
 
     onMovePlayer: function(data) {
         // When a player moves, we get that players object
-        var movePlayer = playerById(data.id);
+        var movePlayer = global.functions.playerById(data.id);
 
-        // if it isn't us, or we can't find it (bad!)
-        if(!movePlayer) {
-            return;
+        if(movePlayer.name != global.state.playername) {
+            // if it isn't us, or we can't find it (bad!)
+            if(!movePlayer) {
+                return;
+            }
+
+            // update the players position locally
+            movePlayer.pos.x = data.x;
+            movePlayer.pos.y = data.y;
+            movePlayer.vel.x = data.vX;
+            movePlayer.vel.y = data.vY;
         }
-
-        // update the players position locally
-        movePlayer.pos.x = data.x;
-        movePlayer.pos.y = data.y;
-        movePlayer.vel.x = data.vX;
-        movePlayer.vel.y = data.vY;
     }
 });

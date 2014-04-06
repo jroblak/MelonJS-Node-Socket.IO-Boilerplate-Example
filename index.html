@@ -6,22 +6,30 @@
     </head>
     <body>
         <div id="screen"></div>
-        <div id="input">
+        <div id="nameinput">
             <input type="text" class="name" name="name" />
         </div>
+        <div id="roominput">
+            <input type="text" class="roomnum" name="roomnum" />
+        </div>
+
         <script type="text/javascript" src="lib/melonJS-0.9.7.js"></script>
         <script type="text/javascript" src="lib/jquery.min.js"></script>
-        <script src="http://ec2-54-234-85-69.compute-1.amazonaws.com/socket.io/socket.io.js"></script>
+        <script src="http://localhost:8080/socket.io/socket.io.js"></script>
 
         <script type="text/javascript" src="js/game.js"></script>
         <script type="text/javascript" src="js/resources.js"></script>
         <script type="text/javascript" src="js/hud.js"></script>
 
         <script type="text/javascript" src="js/screens/load.js"></script>
+        <script type="text/javascript" src="js/screens/room.js"></script>
+        <script type="text/javascript" src="js/screens/lobby.js"></script>
+        <script type="text/javascript" src="js/screens/load.js"></script>
         <script type="text/javascript" src="js/screens/start.js"></script>
         <script type="text/javascript" src="js/screens/play.js"></script>
 
         <script type="text/javascript" src="js/entities/baseentity.js"></script>
+        <script type="text/javascript" src="js/entities/button.js"></script>
         <script type="text/javascript" src="js/entities/player.js"></script>
 
         <script type="text/javascript">

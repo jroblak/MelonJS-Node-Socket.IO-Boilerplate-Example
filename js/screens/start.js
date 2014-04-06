@@ -18,23 +18,19 @@ game.startScreen = me.ScreenObject.extend({
 
         $('.name').css('visibility', 'visible');
 
-
         me.game.viewport.fadeOut("#000", 250);
-    },
-
-    onDestroyEvent : function () {
     },
 
     update: function () {
         if (me.input.isKeyPressed("action")) {
             me.input.unbindKey(me.input.KEY.ENTER, "action");
 
-            global.state.playername = $(":input").val().length > 0 ? $(":input").val() : "Nameless";
+            global.state.playername = $("#nameinput :input").val().length > 0 ? $("#nameinput :input").val() : "Nameless";
 
             $('.name').hide();
 
             me.game.viewport.fadeIn("#000", 500, function () {
-                me.state.change(me.state.PLAY);
+                me.state.change(me.state.LOBBY);
             });
         }
 
@@ -50,7 +46,6 @@ game.startScreen = me.ScreenObject.extend({
                 global.WIDTH / 2,
                 global.HEIGHT - 120
             );
-
 
             this.parent(context);
     }

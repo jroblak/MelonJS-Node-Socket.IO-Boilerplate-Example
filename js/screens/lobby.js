@@ -1,91 +1,99 @@
+/*
+    TODO - Add onDeleteRoom to purge roomlist
+    TODO - Welcome message / effects
+    TODO - Display player character
+    TODO - Add player customization abilities -- reimplement composition engine, add screen it, etc
+    TODO - Make customization unlockable / user accounts
+    TODO - Server list (requires adding passwords and naming rooms)
+*/
+
 game.lobbyScreen = me.ScreenObject.extend({
     init: function() {
-        socket = io.connect(global.network.host, {port: global.network.port, transports: ["websocket"]});
-
-        // and set up our networking callbacks
-        socket.on("connect", this.onSocketConnected);
-        socket.on("new player", this.onNewPlayer);
-        socket.on("move player", this.onMovePlayer);
-        socket.on("remove player", this.onRemovePlayer);
-        socket.on("error", this.handleError);
-        socket.on("pong", this.updateLatency);
-
-        // Helper function to return one of our remote players
-        playerById = function(id) {
-            var i;
-
-            for (i = 0; i < global.state.remotePlayers.length; i++) {
-                if (global.state.remotePlayers[i].id == id)
-                    return global.state.remotePlayers[i];
-            };
-
-            return false;
-        };
+        // This is so we can draw
+        this.parent(true);
     },
 
-    onLobbyEnter: function() {
-        me.game.viewport.fadeOut("#000", 500);
+    onResetEvent: function() {
+        $('.roomnum').css('visibility', 'visible');
+
+        // Connect to server and set global reference to the socket that's connected
+        global.network.socket  = io.connect(global.network.host, {port: global.network.port, transports: ["websocket"]});
+
+        // Set up buttons and fonts
+        this.font = new me.Font("Verdana", 12, "#fff", "center");
+        this.joinbutton = new game.Button(600, 480, "joinbuttonde");
+        this.createbutton = new game.Button(120, 480, "createbuttonde");
+
+        // Set up initial, basic socket handlers
+        global.network.socket.on("connect", this.onSocketConnected(this.joinbutton, this.createbutton));
+        global.network.socket.on("croom", this.onNewRoom);
+        global.network.socket.on("rroom", this.onDelRoom);
+        global.network.socket.on("sendrooms", this.onGetRooms);
+        global.network.socket.on("noroom", this.handleError);
+        global.network.socket.on("error", this.handleError);
+        global.network.socket.on("joincreateconfirm", this.joinRoom);
+
+        // Add our renderable features to the screen
+        me.game.add(new me.ColorLayer("background", "#333333", 1));
+        me.game.add(this.joinbutton, 4);
+        me.game.add(this.createbutton, 4);
+        me.game.sort();
     },
 
-    // For error debugging
+    // Error handler; is called when the server fires off an error message
     handleError: function(error){
         console.log(error);
     },
 
-    onSocketConnected: function() {
-        console.log("Connected to socket server");
-        // When we connect, tell the server we have a new player (us)
-        socket.emit("new player", {x: global.state.localPlayer.pos.x, y: global.state.localPlayer.pos.y, vX:global.state.localPlayer.vel.x, vY: global.state.localPlayer.vel.y})
-
-        // Set up ping / pongs for latency
-        setInterval(function () {
-            global.network.emitTime = +new Date;
-            global.network.emits++;
-            socket.emit('ping');
-        }, 500);
+    // Updates the  initial room list with the server's room list
+    onGetRooms: function(data) {
+        global.state.rooms = data.roomlist;
     },
 
-    updateLatency: function() {
-        // Simply updates the average latency
-        global.network.totlatency += +new Date - global.network.emitTime
-        global.network.latency = Math.round(global.network.totlatency/global.network.emits);
-        me.game.HUD.setItemValue("latency", global.network.latency);
+    // When someone creates a new room, add it to our list
+    // This is called when anyone (including this client) creates a new room
+    onNewRoom: function(data) {
+        global.state.rooms.push(data.room);
     },
 
-    onNewPlayer: function(data) {
-        // When a new player connects, we create their object and add them to the screen.
-        var newPlayer = new game.Player(data.x, data.y, {
-            spritewidth: 50,
-            spriteheight: 30,
-            name: "o"
-        });
-        newPlayer.id = data.id;
-        newPlayer.name = data.name;
-
-        global.state.remotePlayers.push(newPlayer);
-
-        me.game.add(newPlayer, 3);
-        me.game.sort(game.sort);
-
-        // Update the HUD with the new number of players
-        me.game.HUD.setItemValue("connected", (global.state.remotePlayers.length+1));
+    onDelRoom: function(data) {
+        global.state.rooms.splice(global.state.rooms.indexOf(data.room), 1);
     },
 
-    onRemovePlayer: function(data) {
-        // When a player disconnects, we find them in our remote players array
-        var removePlayer = playerById(data.id);
+    joinRoom: function(data) {
+        global.network.room = data.room;
+        me.state.change(me.state.ROOM);
+    },
 
-        if(!removePlayer) {
-            console.log("Player not found "+data.id);
-            return;
-        };
+    // When we connect...
+    onSocketConnected: function(joinbutton, createbutton) {
 
-        // and remove them from the ScreenObject
-        me.game.remove(removePlayer);
-        me.game.sort();
-        global.state.remotePlayers.splice(global.state.remotePlayers.indexOf(removePlayer), 1);
+        // Activate our buttons so that we can join or create new game rooms
+        // On click: takes us to a game "Room"
+        joinbutton.type = "joinbutton";
+        joinbutton.image = me.loader.getImage("joinbutton");
+        createbutton.type = "createbutton";
+        createbutton.image = me.loader.getImage("createbutton");
 
-        // and update the HUD
-        me.game.HUD.setItemValue("connected", (global.state.remotePlayers.length+1));
+        // Get the roomlist from the server
+        global.network.socket.emit("getrooms");
+    },
+
+    // Hide the input box when we leave this screen
+    onDestroyEvent : function () {
+        $('.roomnum').hide();
+    },
+
+    // Draw our basic message
+    draw: function (context) {
+            var msg =  "Enter Room Number:";
+            this.font.draw(
+                context,
+                msg,
+                global.WIDTH / 1.6,
+                global.HEIGHT / 1.42
+            );
+
+            this.parent(context);
     }
 });

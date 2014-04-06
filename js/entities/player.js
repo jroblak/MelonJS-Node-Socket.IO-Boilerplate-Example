@@ -9,8 +9,7 @@ game.Player = game.Entity.extend({
         this.direction = 'right';
         this.font = new me.Font("Verdana", 10, "#000", "center");
 
-        if(this.name === "player") {
-            global.state.localPlayer = this;
+        if(this.name === global.state.playername) {
             me.game.viewport.follow(this, me.game.viewport.AXIS.BOTH);
         }
 
@@ -47,7 +46,6 @@ game.Player = game.Entity.extend({
     },
 
     update : function () {
-        // Movement
         var self = this;
         this.step++;
 
@@ -65,14 +63,24 @@ game.Player = game.Entity.extend({
                 this.vel.y = -this.accel.y * me.timer.tick;
             }
 
+            if(me.input.isKeyPressed("attack")) {
+                if(this.facing === "right") {
+                    // shoot right
+                } else {
+                    // shoot left
+                }
+            }
+
         }
 
         me.game.collide(this, true);
         var result = this.parent();
 
+        // check for collision with attack
+
         // Add step checking and interpolation instead of this
         if(this.name === global.state.playername && result) {
-            socket.emit("move player", {x: this.pos.x, y: this.pos.y, vX: this.vel.x, vY: this.vel.y});
+            global.network.socket.emit("move player", {x: this.pos.x, y: this.pos.y, vX: this.vel.x, vY: this.vel.y});
         }
 
         if(this.step > 99) {

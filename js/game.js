@@ -1,21 +1,38 @@
-// Globals
+/*
+    TODO - Refactor globals into more logical chunks
+*/
 var global = {
     WIDTH: 1136,
     HEIGHT: 640,
-    DOUBLE: true,
     DEBUG: true,
     network: {
-        host: "http://ec2-54-234-85-69.compute-1.amazonaws.com",
-        port: 80,
+        socket: undefined,
+        host: "localhost",
+        port: 8080,
         totlatency: 0,
         latency: 0,
         emitTime: 0,
-        emits: 0
+        emits: 0,
+        room: ""
     },
     state: {
         playername: "",
         localPlayer: undefined,
-        remotePlayers: []
+        remotePlayers: [],
+        rooms: [],
+        status: "No"
+    },
+    functions: {
+        playerById: function(id) {
+            var i;
+
+            for (i = 0; i < global.state.remotePlayers.length; i++) {
+                if (global.state.remotePlayers[i].id === id)
+                    return global.state.remotePlayers[i];
+            };
+
+            return false;
+        }
     }
 }
 
@@ -80,9 +97,13 @@ var game = {
 
     loaded : function () {
         // Game states
+        me.state.LOBBY = me.state.USER + 0;
+        me.state.ROOM = me.state.USER + 1;
+
         me.state.set(me.state.MENU, new game.startScreen());
-        game.playscreen = new game.playScreen();
-        me.state.set(me.state.PLAY, game.playscreen);
+        me.state.set(me.state.ROOM, new game.roomScreen());
+        me.state.set(me.state.LOBBY, new game.lobbyScreen());
+        me.state.set(me.state.PLAY, new game.playScreen());
 
         me.input.bindKey(me.input.KEY.ENTER, "action");
 

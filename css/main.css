@@ -20,6 +20,15 @@ body {
     display: block;
 }
 
+input {
+    border: 0px;
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, .2),
+                      0 0 4px rgba(0, 0, 0, .2);
+    color: #ccc;
+    background: #444;
+    outline: none;
+}
+
 .name {
     position: absolute;
     top: 70%;
@@ -28,11 +37,10 @@ body {
     visibility:hidden;
 }
 
-input {
-    border: 0px;
-    box-shadow: inset 0 0 2px rgba(0, 0, 0, .2),
-                      0 0 4px rgba(0, 0, 0, .2);
-    color: #ccc;
-    background: #444;
-    outline: none;
+.roomnum {
+    position: absolute;
+    top: 65%;
+    left: 68%;
+    width: 15%;
+    visibility:hidden;
 }

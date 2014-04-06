@@ -1,10 +1,11 @@
-var Player = function(startX, startY, velX, velY) {
-    var x = startX,
-        y = startY,
-        id,
-        vX = velX,
-        vY = velY,
-        easyid;
+var Player = function(id, name, room) {
+    var x = 0,
+        y = 0,
+        id = id,
+        vX = 0,
+        vY = 0,
+        name = name,
+        room = room;
 
     var getX = function() {
         return x;
@@ -48,7 +49,8 @@ var Player = function(startX, startY, velX, velY) {
         setvX: setvX,
         setvY: setvY,
         id: id,
-        easyid: easyid,
+        name: name,
+        room:room
     }
 };
 
